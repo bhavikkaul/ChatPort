@@ -1,0 +1,40 @@
+{
+  "manifest_version": 3,
+  "name": "Chat Transfer — move chats between AI tools",
+  "version": "2.0.0",
+  "description": "Take a conversation from any AI chat (Gemini, ChatGPT, Claude, Perplexity, DeepSeek, Grok, Copilot, Le Chat…) and continue it in another.",
+  "permissions": ["storage", "activeTab", "scripting", "clipboardWrite"],
+  "host_permissions": [
+    "https://claude.ai/*",
+    "https://chatgpt.com/*",
+    "https://chat.openai.com/*",
+    "https://gemini.google.com/*",
+    "https://www.perplexity.ai/*",
+    "https://chat.deepseek.com/*",
+    "https://grok.com/*",
+    "https://copilot.microsoft.com/*",
+    "https://chat.mistral.ai/*"
+  ],
+  "background": { "service_worker": "background.js" },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Move this chat to another AI"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://claude.ai/*",
+        "https://chatgpt.com/*",
+        "https://chat.openai.com/*",
+        "https://gemini.google.com/*",
+        "https://www.perplexity.ai/*",
+        "https://chat.deepseek.com/*",
+        "https://grok.com/*",
+        "https://copilot.microsoft.com/*",
+        "https://chat.mistral.ai/*"
+      ],
+      "js": ["providers.js", "fill.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

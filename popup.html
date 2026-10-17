@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style>
+    :root { color-scheme: light dark; }
+    body { width: 340px; margin: 0; padding: 16px; font: 13px/1.4 system-ui, sans-serif; }
+    h1 { font-size: 15px; margin: 0 0 2px; }
+    p.sub { margin: 0 0 12px; opacity: .7; }
+    .row { display: flex; align-items: center; gap: 8px; margin: 8px 0; }
+    .row > span { width: 92px; opacity: .8; flex: none; }
+    select, textarea { flex: 1; font: inherit; padding: 5px 6px; border-radius: 6px; border: 1px solid #8886; background: transparent; color: inherit; }
+    textarea { resize: vertical; min-height: 44px; }
+    #from { font-weight: 600; }
+    label.check { display: flex; align-items: center; gap: 8px; margin: 8px 0; }
+    button { font: inherit; width: 100%; padding: 10px; border: 0; border-radius: 8px; cursor: pointer; }
+    button.primary { background: #d97757; color: #fff; font-weight: 600; margin-top: 10px; }
+    .two { display: flex; gap: 8px; margin-top: 8px; }
+    button.secondary { background: transparent; color: inherit; border: 1px solid #8886; }
+    button:disabled { opacity: .5; cursor: default; }
+    #status { margin-top: 10px; min-height: 18px; font-size: 12px; }
+    #status.err { color: #d33; }
+    #status.warn { color: #c80; }
+  </style>
+</head>
+<body>
+  <h1>Move this chat to another AI</h1>
+  <p class="sub">Open the conversation you want to move, then pick where it goes.</p>
+
+  <div class="row"><span>From</span><div id="from">Detecting…</div></div>
+  <div class="row"><span>To</span><select id="target"></select></div>
+  <div class="row"><span>Include</span>
+    <select id="lastN">
+      <option value="0">Whole conversation</option>
+      <option value="4">Last 4 messages</option>
+      <option value="10">Last 10 messages</option>
+      <option value="20">Last 20 messages</option>
+      <option value="50">Last 50 messages</option>
+    </select>
+  </div>
+  <div class="row"><span>Your note</span>
+    <textarea id="note" placeholder="Optional, e.g. “Continue by writing the tests.”"></textarea>
+  </div>
+  <label class="check"><input type="checkbox" id="autoSend" /> Send automatically (otherwise you review first)</label>
+
+  <button class="primary" id="go">Transfer</button>
+  <div class="two">
+    <button class="secondary" id="copy">Copy</button>
+    <button class="secondary" id="download">Download .md</button>
+  </div>
+  <div id="status"></div>
+
+  <script src="providers.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,101 +1,56 @@
-# ChatPort 🚀
-### Move your AI conversations. Keep your context.
+# Chat Transfer — move a chat between AI tools
 
-ChatPort is a Chrome extension that lets you transfer conversations between AI platforms without manually copying and pasting your entire chat history.
+Take a conversation from one AI chat and continue it in another. Works in both directions between:
 
-Switching from ChatGPT to Claude? Moving a conversation from Gemini to DeepSeek? ChatPort extracts the conversation, builds a context-rich prompt, and opens the destination AI with your conversation ready to continue.
+Claude · ChatGPT · Gemini · Perplexity · DeepSeek · Grok · Copilot · Le Chat
 
-**One conversation. Multiple AI platforms. No starting over.**
+Any other page also works as a *source* through the generic reader, and you can always
+**Copy** or **Download .md** to paste the chat into any tool, even ones not on the list.
 
-## ✨ Features
+## Install (Mac / Chrome)
+1. Open `chrome://extensions`
+2. Turn on **Developer mode** (top right)
+3. Click **Load unpacked** and select this `chat-transfer` folder
+4. Pin the extension from the puzzle-piece menu
 
-- **Cross-platform conversation transfer** — Move chats between ChatGPT, Claude, Gemini, Perplexity, DeepSeek, Grok, Microsoft Copilot, and Mistral Le Chat.
-- **Automatic platform detection** — Detects the AI platform you're currently using and helps you select a destination.
-- **Conversation extraction** — Reads messages from supported chat interfaces, with generic extraction for other pages.
-- **Context-preserving prompts** — Organizes extracted messages into a readable transcript with user and assistant labels.
-- **Selective transfer** — Transfer the last N messages instead of the entire conversation.
-- **Custom instructions** — Add instructions for the destination AI, such as "Continue implementing the project" or "Write unit tests for the code above."
-- **Markdown formatting** — Preserves useful formatting such as code blocks, headings, lists, and links when extracting supported conversations.
-- **Clipboard fallback** — Copies the generated prompt so you can paste it manually if automatic filling fails.
-- **Automatic sending option** — Choose whether to send the prepared conversation automatically or review it first.
+## Use
+1. Open the conversation you want to move. Scroll to the top once so older messages load.
+2. Click the extension icon. **From** is detected automatically; pick **To**.
+3. Optionally limit it to the last N messages, or add a note ("Now write the tests").
+4. Click **Transfer**. The destination opens with the transcript in the prompt box. Review and send,
+   or tick "Send automatically".
 
-## 🛠️ Tech Stack
+If filling ever fails, a note appears on the page and the transcript is already on your clipboard — paste with Cmd+V.
 
-| Technology | Purpose |
-|---|---|
-| JavaScript | Conversation extraction and transfer logic |
-| HTML & CSS | Browser extension interface |
-| Chrome Extension Manifest V3 | Extension configuration and permissions |
-| Chrome Tabs & Scripting APIs | Read conversations and open destination tabs |
-| Chrome Storage API | Save preferences and manage pending transfers |
+## How reading works
+1. **Site reader** — written for Gemini, ChatGPT and Claude (most reliable).
+2. **Generic reader** — a best guess based on common class and attribute names. Used for other sites.
+   The popup tells you when it was used, so check the result looks right.
+3. **Your selection** — if nothing is found, whatever text you've highlighted on the page is used.
 
-## 🔄 How It Works
+## Files
+- `providers.js` — the list of AI sites and how to fill each one. **Start here to add or fix a site.**
+- `extractor.js` — reads the chat from the page.
+- `popup.html` / `popup.js` — the interface and prompt builder.
+- `fill.js` — puts the transcript into the destination's prompt box.
+- `background.js` — small helper so a transfer only lands in the tab the extension opened.
+- `manifest.json` — permissions and which sites the extension runs on.
 
-1. **Extract:** ChatPort reads the messages from your current conversation.
-2. **Prepare:** It converts the messages into a structured transcript and adds your optional instructions.
-3. **Transfer:** It opens the selected AI platform and attempts to insert the transcript into its prompt box.
-4. **Continue:** Review the context and send it to the destination AI.
+## Add another AI
+1. In `providers.js`, add an entry to `SITES` (hostname) and `TARGETS` (URL to open, prompt-box selector, send-button selector).
+2. In `manifest.json`, add its URL to both `host_permissions` and `content_scripts.matches`.
+3. Reload the extension on `chrome://extensions`.
+To read chats *from* it more accurately, add a reader for it in `READERS` in `extractor.js`.
 
-The extension uses dedicated conversation readers for ChatGPT, Claude, and Gemini, with a generic reader as a fallback for other pages.
+## If it breaks
+These sites change their page code often, and the selectors were written without testing against the live pages.
+- **"Couldn't find any messages"** → fix or add the site's reader in `extractor.js`.
+- **Prompt box doesn't fill** → update that site's `editor` selectors in `providers.js`.
+- **Auto-send doesn't click** → update that site's `send` selectors. Sending manually always works.
+To find a selector: right-click the prompt box → Inspect, and look for a stable `id`, `role` or `data-testid`.
 
-## 📸 Demo
-
-_Add screenshots or a short GIF here showing:_
-
-1. ChatPort detecting the source platform.
-2. Selecting a destination AI and adding an instruction.
-3. The conversation appearing in the destination prompt.
-
-## 🚀 Installation
-
-ChatPort can currently be installed locally in Chrome using Developer Mode.
-
-1. Download or clone this repository.
-2. Extract the ZIP file if downloaded.
-3. Open `chrome://extensions` in Chrome.
-4. Enable **Developer mode**.
-5. Click **Load unpacked**.
-6. Select the `chat-transfer` project folder containing `manifest.json`.
-7. Pin ChatPort from the Chrome extensions menu.
-
-## 💡 Usage
-
-1. Open the AI conversation you want to transfer.
-2. Scroll to the top of the conversation so older messages are loaded.
-3. Click the ChatPort extension icon.
-4. Select your destination AI platform.
-5. Optionally select the last N messages or add a custom instruction.
-6. Click **Transfer**.
-7. Review the prepared conversation in the destination AI and send it.
-
-If automatic filling fails, paste the generated transcript from your clipboard.
-
-## 🔒 Privacy & Limitations
-
-- ChatPort is designed as a browser-side extension without a backend service in this repository.
-- Only text conversations are transferred. Images, attachments, and special AI-generated cards are not included.
-- Only messages currently loaded on the page can be extracted.
-- Very long conversations may exceed the destination AI's context limits.
-- Generic extraction and destination selectors may require updates when AI websites change their interfaces.
-
-## 🗺️ Roadmap
-
-- [ ] Improve conversation extraction reliability across AI platforms.
-- [ ] Add more AI platform integrations.
-- [ ] Improve handling of long conversations and context limits.
-- [ ] Add transfer previews and better transcript editing.
-- [ ] Improve formatting preservation for complex conversations.
-
-## 🤝 Contributing
-
-Contributions, bug reports, and suggestions are welcome!
-
-If an AI platform changes its interface, improvements to its conversation reader or destination selectors are especially useful.
-
-## 📄 License
-
-_Add your preferred open-source license here._
-
----
-
-Built to make switching between AI tools a little less painful.
+## Limits
+- Text only. Images, uploaded files and special cards (Deep Research, canvases) aren't carried over.
+- Only what's loaded on the page is read, so scroll up in long chats first.
+- Very long transcripts can exceed the destination's limit — use "Last N messages".
+- Other AIs don't *remember* the chat, they just receive it as text, so details like hidden system instructions don't transfer.
